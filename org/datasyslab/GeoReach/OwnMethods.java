@@ -4,13 +4,78 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.DynamicRelationshipType;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.unsafe.batchinsert.BatchInserter;
+import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.roaringbitmap.RoaringBitmap;
 import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
 
 import com.sun.jersey.api.client.WebResource;
 
 public class OwnMethods {
+	
+	public static long GeoReachIndexSize(String GeoReach_filepath)
+	{
+		BufferedReader reader_GeoReach = null;
+		File file_GeoReach = null;
+		long bits = 0;
+		try
+		{
+			file_GeoReach = new File(GeoReach_filepath);
+			reader_GeoReach = new BufferedReader(new FileReader(file_GeoReach));
+			String tempString_GeoReach = null;
+
+			while((tempString_GeoReach = reader_GeoReach.readLine())!= null)
+			{
+				String[] l_GeoReach = tempString_GeoReach.split(",");
+				
+				int type = Integer.parseInt(l_GeoReach[1]);
+				switch (type)
+				{
+				case 0:
+					RoaringBitmap r = new RoaringBitmap();
+					for(int i = 2;i<l_GeoReach.length;i++)
+					{
+						int out_neighbor = Integer.parseInt(l_GeoReach[i]);
+						r.add(out_neighbor);
+					}
+					String bitmap_ser = OwnMethods.Serialize_RoarBitmap_ToString(r);
+					bits += bitmap_ser.getBytes().length * 8;
+					break;
+				case 1:
+					bits += 32 * 4;
+					break;
+				case 2:
+					bits += 1;
+					break;
+				}
+			}
+			reader_GeoReach.close();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			if(reader_GeoReach!=null)
+			{
+				try
+				{
+					reader_GeoReach.close();
+				}
+				catch(IOException e)
+				{	
+					e.printStackTrace();
+				}
+			}
+		}
+		return bits / 8;
+	}
 	
 	public static ArrayList<Long> ReadExperimentNode(String datasource)
 	{
