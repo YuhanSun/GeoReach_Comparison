@@ -1,6 +1,8 @@
 package org.datasyslab.GeoReach;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
@@ -80,6 +82,45 @@ public class App
 			}
 		}
 	}
+	
+//	public static void CheckCorrectness(String GeoReach_filepath, String ReachGrid_filepath)
+//	{
+//		String GeoReach_line = null, ReachGrid_line = null;
+//		BufferedReader GeoReach_reader = null, ReachGrid_reader = null;
+//		
+//		try
+//		{
+//			GeoReach_reader = new BufferedReader(new FileReader(new File(GeoReach_line)));
+//			ReachGrid_reader = new BufferedReader(new FileReader(new File(ReachGrid_filepath)));
+//			
+//			ReachGrid_reader.readLine();
+//			
+//			while((GeoReach_line = GeoReach_reader.readLine())!=null)
+//			{
+//				String[] GeoReach_l = GeoReach_line.split(",");
+//				
+//				String[] ReachGrid_l = ReachGrid_line.split(" ");
+//				
+//				int id = Integer.parseInt(GeoReach_l[0]);
+//				
+//				int type = Integer.parseInt(GeoReach_l[1]);
+//				if(type == 0)
+//				{
+//					if(Integer.parseInt(ReachGrid_l[1]) != (GeoReach_l.length - 2))
+//						OwnMethods.Print("Grid count inconsistent on id " + id);
+//					for(int i = 2;i<GeoReach_l.length - 1;i++)
+//					{
+//						if(Integer.parseInt(ReachGrid_l[i]) != Integer.parseInt(GeoReach_l[i]))
+//							OwnMethods.Print(String.format("%d:\n%s\n%s", ReachGrid_l[i], GeoReach_l[i]));
+//					}
+//				}
+//				if(type == 1)
+//				{
+//					
+//				}
+//			}
+//		}
+//	}
 	
 	
     public static void main( String[] args )
