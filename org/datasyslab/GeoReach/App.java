@@ -28,21 +28,20 @@ public class App
 		int ratio = 20;
 		
 //		for (String datasource : datasource_a)
-		String datasource = "go_uniprot";
+		String datasource = "Patents";
 		{
-			String graph_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/new_graph.txt", datasource);
-			String entity_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/%s/%d/new_entity.txt", datasource, distribution, ratio);
+			String graph_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/new_graph.txt", datasource);
+			String entity_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/%s/%d/new_entity.txt", datasource, distribution, ratio);
 			
-//			for (int MG = 32; MG <= 2048; MG *=4)
-			ArrayList<Integer> MGs = new ArrayList<Integer>()
-			{
-				{
-					add(8);
-					add(16);
-					add(64);
-				}
-			};
-			for (int MG : MGs)
+			for (int MG = 32; MG <= 2048; MG *=4)
+//			ArrayList<Integer> MGs = new ArrayList<Integer>()
+//			{
+//				{
+//					add(8);
+//					add(64);
+//				}
+//			};
+//			for (int MG : MGs)
 			{
 				String GeoReach_filepath = String.format("/home/yuhansun/Documents/share/Real_data/%s/GeoReachIndex/MG/GeoReach_%d.txt", datasource, MG);
 				String db_folder_name = String.format("neo4j-community-2.3.3_GeoReach_%d", MG);
@@ -126,7 +125,7 @@ public class App
     public static void main( String[] args )
     {
 //    	LoadData_MR();
-//    	LoadData_MG();
+    	LoadData_MG();
 //    	test();
     }
 }

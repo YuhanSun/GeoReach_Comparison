@@ -162,16 +162,16 @@ public class Experiment {
 			
 			
 //			for (String datasource : datasource_a)
-			String datasource = "go_uniprot";
+			String datasource = "Patents";
 			{
 				OwnMethods.WriteFile(result_path_time, true, datasource+"\n");
 				OwnMethods.WriteFile(result_path_count, true, datasource+"\n");
 				
-//				OwnMethods.WriteFile(result_path_time, true, "selectivity\t32_time\t128_time\t512_time\t2048_time\n");
-//				OwnMethods.WriteFile(result_path_count, true, "selectivity\t32_count\t128_count\t512_count\t2048_count\n");
+				OwnMethods.WriteFile(result_path_time, true, "selectivity\t32_time\t128_time\t512_time\t2048_time\n");
+				OwnMethods.WriteFile(result_path_count, true, "selectivity\t32_count\t128_count\t512_count\t2048_count\n");
 				
-				OwnMethods.WriteFile(result_path_time, true, "selectivity\t8_time\t16_time\t32_time\t64_time\n");
-				OwnMethods.WriteFile(result_path_count, true, "selectivity\t8_count\t16_count\t32_count\t64_count\n");
+//				OwnMethods.WriteFile(result_path_time, true, "selectivity\t8_time\t16_time\t32_time\t64_time\n");
+//				OwnMethods.WriteFile(result_path_count, true, "selectivity\t8_count\t16_count\t32_count\t64_count\n");
 				
 				String querynodeid_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/experiment_id.txt", datasource);
 				ArrayList<String> nodeids = ReadExperimentNode(querynodeid_filepath);
@@ -185,9 +185,11 @@ public class Experiment {
 					String queryrectangle_filepath = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/experiment_query/%d.txt", log);
 					ArrayList<MyRectangle> queryrectangles = ReadExperimentQueryRectangle(queryrectangle_filepath);
 
-//					for (int MG = 32; MG <= 2048; MG *= 4)
+					int true_count = 0;
+					boolean true_count_record = true;
+					for (int MG = 32; MG <= 2048; MG *= 4)
 					//for( int MG = 2048; MG >= 32; MG /= 4)
-					for (int MG = 8; MG <= 64; MG *= 2)
+//					for (int MG = 8; MG <= 64; MG *= 2)
 					{
 						String db_path = String.format("/home/yuhansun/Documents/Real_data/%s/MG_Experiment/neo4j-community-2.3.3_GeoReach_%d", datasource, MG);
 						OwnMethods.Print(OwnMethods.RestartNeo4jServerClearCache(db_path));
@@ -205,18 +207,22 @@ public class Experiment {
 							MyRectangle queryrect = queryrectangles.get(i);
 
 							long start = System.currentTimeMillis();
-							geo.ReachabilityQuery(id, queryrect);
+							boolean result = geo.ReachabilityQuery(id, queryrect);
 							time += System.currentTimeMillis() - start;
 							visitednode_count += geo.visited_count;
+							if(result && true_count_record)
+								true_count++;
 						}
 						
 						OwnMethods.Print(Neo4j_Graph_Store.StopServer(db_path));
 
 						OwnMethods.WriteFile(result_path_time, true, time / nodeids.size()+"\t");
 						OwnMethods.WriteFile(result_path_count, true, visitednode_count + "\t");
+						
+						true_count_record = false;
 					}
 					
-					OwnMethods.WriteFile(result_path_time, true, "\n");
+					OwnMethods.WriteFile(result_path_time, true, true_count + "\n");
 					OwnMethods.WriteFile(result_path_count, true, "\n");
 
 					selectivity *= 10;
@@ -317,11 +323,41 @@ public class Experiment {
 		
 	}
 
+	public static void IndexSize()
+	{
+		for(String distribution: new ArrayList<String>(){{add("Clustered_distributed"); add("Zipf_distributed");}})
+		{
+			String resultpath = String.format("/home/yuhansun/Documents/GeoReach_Comparison_Experiment_Result/%s_index_size.csv", distribution);
+			for (String datasource : datasource_a)
+			{
+				OwnMethods.WriteFile(resultpath, true, datasource + "\n");
+				
+				int MG;
+				if(datasource.equals("Patents"))
+					MG = 32;
+				else {
+					if(datasource.equals("go_uniprot"))
+						MG = 8;
+					else
+						MG = 128;
+				}
+				for (int ratio = 20; ratio <= 80; ratio += 20)
+				{
+					String GeoReach_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/GeoReachIndex/GeoReach_%s_%d_%d.txt", datasource, distribution, ratio, MG);
+					long size = OwnMethods.GeoReachIndexSize(GeoReach_filepath);
+					OwnMethods.WriteFile(resultpath, true, ratio + "\t" + size + "\n");
+				}
+				OwnMethods.WriteFile(resultpath, true, "\n");
+			}
+		}
+	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		Experiment_MG_Implementation();
+//		IndexSize();
 //		GenerateQueryRectangle();
-		Experiment_MR_Implementation();
+//		Experiment_MR_Implementation();
 	}
 
 }
