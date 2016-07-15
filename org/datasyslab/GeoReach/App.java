@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.security.spec.MGF1ParameterSpec;
 import java.util.ArrayList;
 
 import org.postgresql.gss.MakeGSS;
@@ -22,13 +23,44 @@ public class App
 	    
 	}};
 	
+	public static void LoadData_Distribution()
+	{
+		String distribution = "Random_spatial_distributed";
+		int ratio = 80;
+		
+		for (String datasource : datasource_a)
+//		String datasource = "Patents";
+		{
+			String graph_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/new_graph.txt", datasource);
+			String entity_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/%s/%d/new_entity.txt", datasource, distribution, ratio);
+			
+			int MG;
+			if(datasource.equals("go_uniprot"))
+				MG = 8;
+			else
+			{
+				if(datasource.equals("Patents"))
+					MG = 32;
+				else
+					MG = 128;
+			}
+				
+			{
+				String GeoReach_filepath = String.format("/home/yuhansun/Documents/share/Real_data/%s/GeoReachIndex/GeoReach_%s_%d_%d.txt", datasource, distribution, ratio, MG);
+				String db_folder_name = String.format("neo4j-community-2.3.3_GeoReach_%d", MG);
+				String db_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/%s/data/graph.db", datasource, db_folder_name);
+				new Batch_Inserter(graph_filepath, entity_filepath, GeoReach_filepath, db_filepath);
+			}
+		}
+	}
+	
 	public static void LoadData_MG()
 	{
 		String distribution = "Random_spatial_distributed";
 		int ratio = 20;
 		
-//		for (String datasource : datasource_a)
-		String datasource = "Patents";
+		for (String datasource : datasource_a)
+//		String datasource = "Patents";
 		{
 			String graph_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/new_graph.txt", datasource);
 			String entity_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/%s/%d/new_entity.txt", datasource, distribution, ratio);
@@ -124,8 +156,9 @@ public class App
 	
     public static void main( String[] args )
     {
+    	LoadData_Distribution();
 //    	LoadData_MR();
-    	LoadData_MG();
+//    	LoadData_MG();
 //    	test();
     }
 }
