@@ -154,15 +154,16 @@ public class Experiment {
 	{
 		try
 		{
+			int ratio = 80;
 			double total_range_size = 1000;
 			MyRectangle p_total_range = new MyRectangle(0,0,total_range_size, total_range_size);
 			int p_split_pieces = 128;
-			String result_path_time = "/home/yuhansun/Documents/Real_data/GeoReach_Experiment/result/MG/querytime.csv";
-			String result_path_count = "/home/yuhansun/Documents/Real_data/GeoReach_Experiment/result/MG/accesscount.csv";
+			String result_path_time = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/MG/querytime_"+ratio+".csv";
+			String result_path_count = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/MG/accesscount_"+ratio+".csv";
 			
 			
-//			for (String datasource : datasource_a)
-			String datasource = "Patents";
+			for (String datasource : datasource_a)
+//			String datasource = "Patents";
 			{
 				OwnMethods.WriteFile(result_path_time, true, datasource+"\n");
 				OwnMethods.WriteFile(result_path_count, true, datasource+"\n");
@@ -187,11 +188,22 @@ public class Experiment {
 
 					int true_count = 0;
 					boolean true_count_record = true;
-					for (int MG = 32; MG <= 2048; MG *= 4)
-					//for( int MG = 2048; MG >= 32; MG /= 4)
-//					for (int MG = 8; MG <= 64; MG *= 2)
+					
+					ArrayList<Integer> MGs = new ArrayList<Integer>();
+					
+					if(datasource.equals("go_uniprot"))
 					{
-						String db_path = String.format("/home/yuhansun/Documents/Real_data/%s/MG_Experiment/neo4j-community-2.3.3_GeoReach_%d", datasource, MG);
+						for(int MG = 8;MG<=64; MG*=2)
+							MGs.add(MG);
+					}
+					else
+					{
+						for(int MG = 32; MG <= 2048; MG *= 4)
+							MGs.add(MG);
+					}
+					for (int MG : MGs)
+					{
+						String db_path = String.format("/home/yuhansun/Documents/Real_data/%s/MG_Experiment/neo4j-community-2.3.3_GeoReach_%d_%d", datasource, MG, ratio);
 						OwnMethods.Print(OwnMethods.RestartNeo4jServerClearCache(db_path));
 						
 						Thread.currentThread().sleep(5000);
@@ -212,6 +224,8 @@ public class Experiment {
 							visitednode_count += geo.visited_count;
 							if(result && true_count_record)
 								true_count++;
+							
+							OwnMethods.ClearCache();
 						}
 						
 						OwnMethods.Print(Neo4j_Graph_Store.StopServer(db_path));
@@ -246,11 +260,12 @@ public class Experiment {
 	{
 		try
 		{
+			int ratio = 80;
 			double total_range_size = 1000;
 			MyRectangle p_total_range = new MyRectangle(0,0,total_range_size, total_range_size);
 			int p_split_pieces = 128;
-			String result_path_time = "/home/yuhansun/Documents/Real_data/GeoReach_Experiment/result/MR/querytime.csv";
-			String result_path_count = "/home/yuhansun/Documents/Real_data/GeoReach_Experiment/result/MR/accesscount.csv";
+			String result_path_time = "/home/yuhansun/Documents/share/Real_data/GeoReach_Experiment/result/MR/querytime_"+ratio+".csv";
+			String result_path_count = "/home/yuhansun/Documents/share/Real_data/GeoReach_Experiment/result/MR/accesscount_"+ratio+".csv";
 			
 			
 			for (String datasource : datasource_a)
@@ -258,12 +273,12 @@ public class Experiment {
 			{
 				OwnMethods.WriteFile(result_path_time, true, datasource+"\n");
 				OwnMethods.WriteFile(result_path_count, true, datasource+"\n");
+								
+//				OwnMethods.WriteFile(result_path_time, true, "selectivity\t0_time\t35_time\t70_time\t105_time\n");
+//				OwnMethods.WriteFile(result_path_count, true, "selectivity\t0_count\t35_count\t70_count\t105_count\n");
 				
-//				OwnMethods.WriteFile(result_path_time, true, "selectivity\t32_time\t128_time\t512_time\t2048_time\n");
-//				OwnMethods.WriteFile(result_path_count, true, "selectivity\t32_count\t128_count\t512_count\t2048_count\n");
-				
-				OwnMethods.WriteFile(result_path_time, true, "selectivity\t0_time\t35_time\t70_time\t105_time\n");
-				OwnMethods.WriteFile(result_path_count, true, "selectivity\t0_count\t35_count\t70_count\t105_count\n");
+				OwnMethods.WriteFile(result_path_time, true, "selectivity\t0_time\t50_time\t100_time\n");
+				OwnMethods.WriteFile(result_path_count, true, "selectivity\t0_count\t50_count\t100_count\n");
 				
 				String querynodeid_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/experiment_id.txt", datasource);
 				ArrayList<String> nodeids = ReadExperimentNode(querynodeid_filepath);
@@ -277,9 +292,17 @@ public class Experiment {
 					String queryrectangle_filepath = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/experiment_query/%d.txt", log);
 					ArrayList<MyRectangle> queryrectangles = ReadExperimentQueryRectangle(queryrectangle_filepath);
 
-					for (int MR = 0; MR <= 105; MR += 35)
+					ArrayList<Integer> MRs = new ArrayList<Integer>(){
+						{
+							add(0);
+							add(50);
+							add(105);
+						}
+					};
+					for (int MR : MRs)
+//					int MR = 50;
 					{
-						String db_path = String.format("/home/yuhansun/Documents/Real_data/%s/MR_Experiment/neo4j-community-2.3.3_GeoReach_%d", datasource, MR);
+						String db_path = String.format("/home/yuhansun/Documents/Real_data/%s/MR_Experiment/neo4j-community-2.3.3_GeoReach_%d_%d", datasource, MR, ratio);
 						OwnMethods.Print(OwnMethods.RestartNeo4jServerClearCache(db_path));
 						
 						Thread.currentThread().sleep(5000);
@@ -330,13 +353,13 @@ public class Experiment {
 			double total_range_size = 1000;
 			MyRectangle p_total_range = new MyRectangle(0,0,total_range_size, total_range_size);
 			int p_split_pieces = 128;
-			int ratio = 80;
+			int ratio = 20;
 			String result_path_time = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/result/random/querytime_%d.csv", ratio);
 			String result_path_count = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/result/random/accesscount_%d.csv", ratio);
 			
 			
-			for (String datasource : datasource_a)
-//			String datasource = "Patents";
+//			for (String datasource : datasource_a)
+			String datasource = "Patents";
 			{
 				OwnMethods.WriteFile(result_path_time, true, datasource+"\n");
 				OwnMethods.WriteFile(result_path_count, true, datasource+"\n");
@@ -447,11 +470,11 @@ public class Experiment {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Experiment_Distribution_Implementation();
+//		Experiment_Distribution_Implementation();
 //		Experiment_MG_Implementation();
 //		IndexSize();
 //		GenerateQueryRectangle();
-//		Experiment_MR_Implementation();
+		Experiment_MR_Implementation();
 	}
 
 }
