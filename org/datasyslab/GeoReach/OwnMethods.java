@@ -80,7 +80,6 @@ public class OwnMethods {
 	public static ArrayList<Long> ReadExperimentNode(String datasource)
 	{
 		String filepath = "/home/yuhansun/Documents/Real_data/"+datasource+"/experiment_id.txt";
-		int offset = OwnMethods.GetNodeCount(datasource);
 		ArrayList<Long> al = new ArrayList<Long>();
 		BufferedReader reader  = null;
 		File file = null;
@@ -91,7 +90,7 @@ public class OwnMethods {
 			String temp = null;
 			while((temp = reader.readLine())!=null)
 			{
-				al.add(Long.parseLong(temp)+offset);
+				al.add(Long.parseLong(temp));
 			}
 			reader.close();
 		}
@@ -280,7 +279,7 @@ public class OwnMethods {
 	public static String ClearCache()
 	{
 		//String[] command = {"/bin/bash","-c","echo data| sudo -S ls"};
-		String []cmd = {"/bin/bash","-c","echo data | sudo -S sh -c \"sync; echo 3 > /proc/sys/vm/drop_caches\""};
+		String []cmd = {"/bin/bash","-c","echo syh19910205 | sudo -S sh -c \"sync; echo 3 > /proc/sys/vm/drop_caches\""};
 		String result = null;
 		try 
 		{
@@ -304,23 +303,23 @@ public class OwnMethods {
 		return result;
 	}
 	
-	public static String RestartMyNeo4jServerClearCache(String datasource)
-	{
-		String result = "";
-		result += Neo4j_Graph_Store.StopMyServer(datasource);
-		result += ClearCache();
-		result += Neo4j_Graph_Store.StartMyServer(datasource);
-		return result;
-	}
+//	public static String RestartMyNeo4jServerClearCache(String datasource)
+//	{
+//		String result = "";
+//		result += Neo4j_Graph_Store.StopMyServer(datasource);
+//		result += ClearCache();
+//		result += Neo4j_Graph_Store.StartMyServer(datasource);
+//		return result;
+//	}
 	
-	public static String RestartNeo4jServerClearCache(String neo4j_path)
-	{
-		String result = "";
-		result += Neo4j_Graph_Store.StopServer(neo4j_path);
-		result += ClearCache();
-		result += Neo4j_Graph_Store.StartServer(neo4j_path);
-		return result;
-	}
+//	public static String RestartNeo4jServerClearCache(String neo4j_path)
+//	{
+//		String result = "";
+//		result += Neo4j_Graph_Store.StopServer(neo4j_path);
+//		result += ClearCache();
+//		result += Neo4j_Graph_Store.StartServer(neo4j_path);
+//		return result;
+//	}
 	
 	public static String Serialize_RoarBitmap_ToString(RoaringBitmap r)
 	{
