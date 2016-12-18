@@ -678,6 +678,79 @@ public class Experiment {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void Experiment_Selectivity_HotNeo4j_DAG_TOPO() {
+		try {
+			String datasource = "Patents";
+			int ratio = 80;
+			MyRectangle p_total_range = new MyRectangle(0.0, 0.0, 1000.0, 1000.0);
+			int p_split_pieces = 128;
+			String result_path_time = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/" + datasource + "_GeoReach_querytime" + ".csv";
+			String result_path_count = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/" + datasource + "_GeoReach_accesscount" + ".csv";
+			String log_path = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/log_GeoReach.log";
+			OwnMethods.WriteFile((String)result_path_time, (boolean)true, (String)(String.valueOf(datasource) + "\t" + ratio + "\tHotNeo4j\t\n"));
+			OwnMethods.WriteFile((String)result_path_count, (boolean)true, (String)(String.valueOf(datasource) + "\t" + ratio + "\tHotNeo4j\t\n"));
+			OwnMethods.WriteFile((String)log_path, (boolean)true, (String)String.format("GeoReach\t%s\t%d\n", datasource, ratio));
+			String querynodeid_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/topology_sort.txt", datasource);
+			ArrayList<Integer> nodeids = OwnMethods.ReadTopologicalList(querynodeid_filepath);
+			double selectivity = 1.0E-6;
+			int experiment_count = 50;
+			
+			OwnMethods.ClearCache((String)password);
+			String db_path = String.format("/home/yuhansun/Documents/Real_data/%s/neo4j-community-2.3.3_GeoReach_%d", datasource, ratio);
+			Neo4j_Graph_Store.StartServer(db_path);
+			Thread.currentThread();
+			Thread.sleep(2000);
+			
+			while (selectivity < 0.9) 
+			{
+				OwnMethods.WriteFile((String)result_path_time, (boolean)true, (String)(String.valueOf(selectivity) + "\t"));
+				OwnMethods.WriteFile((String)result_path_count, (boolean)true, (String)(String.valueOf(selectivity) + "\t"));
+				OwnMethods.WriteFile((String)log_path, (boolean)true, (String)(String.valueOf(selectivity) + "\n"));
+				int log = (int)Math.log10(selectivity);
+				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/experiment_query/%d.txt", log);
+				ArrayList<MyRectangle> queryrectangles = Traversal.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				int true_count = 0;
+				boolean true_count_record = true;
+				int visitednode_count = 0;
+				int time = 0;
+				int i = 0;
+				while (i < experiment_count) {
+					OwnMethods.Print((Object)i);
+					int id = (nodeids.get(i));
+					MyRectangle queryrect = queryrectangles.get(i);
+					
+					GeoReach georeach = new GeoReach(p_total_range, 128, 0);
+					long one_time = 0;
+					long start = System.currentTimeMillis();
+					boolean result = georeach.ReachabilityQuery(id, queryrect);
+					one_time = System.currentTimeMillis() - start;
+					time = (int)((long)time + one_time);
+					visitednode_count += georeach.VisitedVertices.size();
+					if (result && true_count_record) {
+						++true_count;
+					}
+					OwnMethods.WriteFile((String)log_path, (boolean)true, (String)(String.valueOf(String.format("%d\t%d\t%d\t", one_time, georeach.neo4j_time, georeach.VisitedVertices.size())) + result + "\n"));
+					
+					++i;
+				}
+				OwnMethods.WriteFile((String)result_path_time, (boolean)true, (String)(String.valueOf(time / experiment_count) + "\t"));
+				OwnMethods.WriteFile((String)result_path_count, (boolean)true, (String)(String.valueOf(visitednode_count / experiment_count) + "\t"));
+				true_count_record = false;
+				OwnMethods.WriteFile((String)result_path_time, (boolean)true, (String)(String.valueOf(true_count) + "\n"));
+				OwnMethods.WriteFile((String)result_path_count, (boolean)true, (String)"\n");
+				selectivity *= 10.0;
+			}
+			OwnMethods.WriteFile((String)result_path_time, (boolean)true, (String)"\n");
+			OwnMethods.WriteFile((String)result_path_count, (boolean)true, (String)"\n");
+			OwnMethods.WriteFile((String)log_path, (boolean)true, (String)"\n");
+			
+			Neo4j_Graph_Store.StopServer(db_path);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void Experiment_Selectivity_ColdNeo4j_DAG() {
 		try {
@@ -1600,6 +1673,36 @@ public class Experiment {
 		OwnMethods.WriteFile((String)"/home/yuhansun/Documents/share/MC3_test.txt", (boolean)true, (String)"\n");
 	}
 	
+	public static void App()
+	{
+		
+		MyRectangle p_total_range = new MyRectangle(0,0,1000,1000);
+//		int id = 3774759;
+//		MyRectangle query_rect = new MyRectangle(230.499110	,758.509787	,231.499110	,759.509787);
+		
+//		int id = 3774681;
+//		MyRectangle query_rect = new MyRectangle(360.089670	,231.949886	,361.089670	,232.949886);
+		
+//		int id = 3774586;
+//		MyRectangle query_rect = new MyRectangle(687.154104	,742.183624	,688.154104	,743.183624);
+		
+//		int id = 0;
+//		MyRectangle query_rect = new MyRectangle(993.073786	,976.517706	,994.073786	,977.517706);
+		
+		int id = 38;
+		MyRectangle query_rect = new MyRectangle(795.398110	,12.623883	,796.398110	,13.623883);
+		
+		
+		GeoReach geoReach = new GeoReach(p_total_range, split_pieces, 0);
+		long start = System.currentTimeMillis();
+		boolean result = geoReach.ReachabilityQuery(id, query_rect);
+		long time = System.currentTimeMillis() - start;
+		OwnMethods.Print((Object)result);
+		OwnMethods.Print(String.format("id:%d\n%f\t%f\t%f\t%f\t", id, query_rect.min_x, query_rect.min_y, query_rect.max_x,query_rect.max_y));
+		OwnMethods.Print("Time:" + time);
+		OwnMethods.Print(String.format("Visited count:%d", geoReach.VisitedVertices.size()));
+	}
+	
 	public static int split_pieces = 128;
 	public static ArrayList<String> datasource_a = new ArrayList<String>();
 	public static ArrayList<String> distribution_a = new ArrayList<String>();
@@ -1607,6 +1710,7 @@ public class Experiment {
 	public static String datasource = "foursquare";
 	public static String distribution = "Random_spatial_distributed";
 	public static int target_folder = 1;
+	
 
 	public static void main(String[] args) {
 		try {
@@ -1616,8 +1720,11 @@ public class Experiment {
 //			Experiment_Hot_False(datasource, target_folder);
 //			Experiment_Hot_True(datasource, target_folder);
 			
-			Traversal.Experiment_Cold_True(datasource, target_folder);
-			Experiment_Cold_True(datasource, target_folder);
+//			Traversal.Experiment_Cold_True(datasource, target_folder);
+//			Experiment_Cold_True(datasource, target_folder);
+			
+//			App();
+			Experiment_Selectivity_HotNeo4j_DAG_TOPO();
 			
 		}
 		catch (Exception e) {

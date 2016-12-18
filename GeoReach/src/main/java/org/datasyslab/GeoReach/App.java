@@ -39,14 +39,19 @@ public class App {
     }
 
     public static void LoadData_Distribution() {
-        String distribution = "Random_spatial_distributed";
-        int ratio = 40;
-        String datasource = "citeseerx";
+//        String distribution = "Random_spatial_distributed";
+    	String distribution = "Clustered_distributed";
+//    	String distribution = "Zipf_distributed";
+        int ratio = 80;
+        int MR = 200;
+        int MC = 0;
+        int MG = 128;
+        String datasource = "Patents";
         String graph_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/new_graph.txt", datasource);
         String entity_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/%s/%d/new_entity.txt", datasource, distribution, ratio);
-        int MG = 128;
-        String GeoReach_filepath = String.format("/home/yuhansun/Documents/share/Real_data/%s/GeoReachIndex/GeoReach_%s_%d_%d.txt", datasource, distribution, ratio, MG);
-        String db_folder_name = String.format("neo4j-community-2.3.3_GeoReach_%d", MG);
+        
+        String GeoReach_filepath = String.format("/home/yuhansun/Documents/share/Real_data/%s/GeoReachIndex/GeoReach_%s_%d_%d_%d_%d.txt", datasource, distribution, ratio, MG,MR,MC);
+        String db_folder_name = String.format("neo4j-community-2.3.3_GeoReach_%d", ratio);
         String db_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/%s/data/graph.db", datasource, db_folder_name);
         new org.datasyslab.GeoReach.Batch_Inserter(graph_filepath, entity_filepath, GeoReach_filepath, db_filepath);
     }
@@ -156,6 +161,7 @@ public class App {
     }
 
     public static void main(String[] args) {
-        App.LoadData_MC();
+//        App.LoadData_MC();
+    	LoadData_Distribution();
     }
 }

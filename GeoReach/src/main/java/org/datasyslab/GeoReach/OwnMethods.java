@@ -30,10 +30,35 @@ import org.neo4j.graphdb.Node;
 import org.roaringbitmap.RoaringBitmap;
 import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
 
-/*
- * This class specifies class file version 49.0 but uses Java 6 signatures.  Assumed Java 6.
- */
+
 public class OwnMethods {
+	
+	public static ArrayList<Integer> ReadTopologicalList(String filepath)
+	{
+		ArrayList<Integer> list = null;
+		BufferedReader reader = null;
+		String tempString = null;
+		try
+		{
+			reader = new BufferedReader(new FileReader(new File(filepath)));
+			int node_count = Integer.parseInt(reader.readLine());
+			list = new ArrayList<Integer>(node_count);
+			while((tempString = reader.readLine())!=null)
+			{
+				String[] lStrings = tempString.split("\t");
+				int id = Integer.parseInt(lStrings[1]);
+				list.add(id);
+			}
+			reader.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return list;
+		
+	}
+	
     public static ArrayList<ArrayList<Integer>> ReadGraph(String graph_path) {
         ArrayList graph = null;
         BufferedReader reader = null;
