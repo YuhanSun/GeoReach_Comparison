@@ -1616,8 +1616,10 @@ public class Experiment {
 //			Experiment_Hot_False(datasource, target_folder);
 //			Experiment_Hot_True(datasource, target_folder);
 			
-			Traversal.Experiment_Cold_True(datasource, target_folder);
-			Experiment_Cold_True(datasource, target_folder);
+//			Traversal.Experiment_Cold_True(datasource, target_folder);
+//			Experiment_Cold_True(datasource, target_folder);
+			
+			OwnMethods.Print("test");
 			
 		}
 		catch (Exception e) {
