@@ -1,4 +1,4 @@
-package org.datasyslab.GeoReach;
+package org.datasyslab.Experiment;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,12 +13,13 @@ import java.util.Random;
 import java.util.TreeSet;
 
 import org.apache.lucene.analysis.standard.StandardTokenizerInterface;
+import org.datasyslab.Experiment.Experiment;
 import org.datasyslab.GeoReach.Entity;
-import org.datasyslab.GeoReach.Experiment;
 import org.datasyslab.GeoReach.GeoReach;
 import org.datasyslab.GeoReach.MyRectangle;
 import org.datasyslab.GeoReach.Neo4j_Graph_Store;
 import org.datasyslab.GeoReach.OwnMethods;
+import org.datasyslab.GeoReach.Traversal;
 import org.neo4j.register.Register.Int;
 
 /*
