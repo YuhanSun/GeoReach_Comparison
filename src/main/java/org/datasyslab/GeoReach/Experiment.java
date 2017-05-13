@@ -679,17 +679,24 @@ public class Experiment {
 		}
 	}
 
+	/**
+	 * for dag dataset change spatial selectivity
+	 */
 	public static void Experiment_Selectivity_ColdNeo4j_DAG() {
 		try {
 			String datasource = "citeseerx";
 			int ratio = 40;
 			MyRectangle p_total_range = new MyRectangle(0.0, 0.0, 1000.0, 1000.0);
 			int p_split_pieces = 128;
-			String result_path_time = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/" + datasource + "_GeoReach_querytime" + ".csv";
-			String result_path_count = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/" + datasource + "_GeoReach_accesscount" + ".csv";
+			
+			String result_path_time = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/" 
+			+ datasource + "_GeoReach_querytime" + ".csv";
+			String result_path_count = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/" 
+			+ datasource + "_GeoReach_accesscount" + ".csv";
 			String log_path = "/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/result/query_GeoReach.log";
-			OwnMethods.WriteFile((String)result_path_time, (boolean)true, (String)(String.valueOf(datasource) + "\t" + ratio + "\tColdNeo4j\t\n"));
-			OwnMethods.WriteFile((String)result_path_count, (boolean)true, (String)(String.valueOf(datasource) + "\t" + ratio + "\tColdNeo4j\t\n"));
+			
+			OwnMethods.WriteFile(result_path_time, true, (String.valueOf(datasource) + "\t" + ratio + "\tColdNeo4j\t\n"));
+			OwnMethods.WriteFile(result_path_count, true, (String.valueOf(datasource) + "\t" + ratio + "\tColdNeo4j\t\n"));
 			OwnMethods.WriteFile((String)log_path, (boolean)true, (String)String.format("GeoReach\t%s\t%d\n", datasource, ratio));
 			String querynodeid_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/experiment_id.txt", datasource);
 			ArrayList<String> nodeids = Experiment.ReadExperimentNode(querynodeid_filepath);
@@ -1618,8 +1625,6 @@ public class Experiment {
 			
 //			Traversal.Experiment_Cold_True(datasource, target_folder);
 //			Experiment_Cold_True(datasource, target_folder);
-			
-			OwnMethods.Print("test");
 			
 		}
 		catch (Exception e) {

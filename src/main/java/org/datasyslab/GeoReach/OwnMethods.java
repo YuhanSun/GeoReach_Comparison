@@ -1,6 +1,11 @@
 package org.datasyslab.GeoReach;
 
 import com.sun.jersey.api.client.WebResource;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.index.strtree.STRtree;
+
 import java.io.BufferedReader;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -34,6 +39,25 @@ import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
  * This class specifies class file version 49.0 but uses Java 6 signatures.  Assumed Java 6.
  */
 public class OwnMethods {
+	
+	public static ArrayList<Integer> ReadCenterID(String path)
+	{
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+		BufferedReader reader = null;
+		String line = null;
+		try {
+			reader = new BufferedReader(new FileReader(new File(path)));
+			while ( (line = reader.readLine()) != null )
+			{
+				int id = Integer.parseInt(line);
+				ids.add(id);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return ids;
+	}
+	
     public static ArrayList<ArrayList<Integer>> ReadGraph(String graph_path) {
         ArrayList graph = null;
         BufferedReader reader = null;
@@ -318,6 +342,23 @@ public class OwnMethods {
         System.out.println(o);
     }
 
+    public static ArrayList<Integer> GetRandom_NoDuplicate(ArrayList<Integer> wholeset, int count)
+	{
+		ArrayList<Integer> result = new ArrayList<Integer>(count);
+		HashSet<Integer> hashSet = new HashSet<Integer>();
+		Random random = new Random();
+		while ( hashSet.size() < count)
+		{
+			int index = (int) (random.nextFloat() * wholeset.size());
+			if(hashSet.contains(index) == false)
+			{
+				hashSet.add(index);
+				result.add(wholeset.get(index));
+			}
+		}
+		return result;
+	}
+    
     public static HashSet<Long> GenerateRandomInteger(long graph_size, int node_count) {
         HashSet<Long> ids = new HashSet<Long>();
         Random random = new Random();
@@ -425,6 +466,15 @@ public class OwnMethods {
         }
         System.out.println("File not exists!");
         return 0;
+    }
+    
+    public static int GetSpatialEntityCount(ArrayList<Entity> entities)
+    {
+    	int count = 0;
+    	for ( Entity entity : entities)
+    		if(entity.IsSpatial)
+    			count++;
+    	return count;
     }
 
     public static int GetNodeCount(String datasource) {
@@ -560,5 +610,20 @@ public class OwnMethods {
             return false;
         }
         return true;
+    }
+    
+    public static STRtree ConstructSTRee(ArrayList<Entity> entities)
+    {
+    	STRtree strtree = new STRtree();
+
+    	GeometryFactory fact=new GeometryFactory();
+    	for(Entity entity : entities)
+    		if(entity.IsSpatial)
+    		{
+    			Point datapoint = fact.createPoint(new Coordinate(entity.lon, entity.lat));
+    			strtree.insert(datapoint.getEnvelopeInternal(), datapoint);
+    			
+    		}
+    	return strtree;
     }
 }
