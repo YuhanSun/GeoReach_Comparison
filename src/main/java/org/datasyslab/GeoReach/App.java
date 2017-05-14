@@ -19,8 +19,7 @@ import org.datasyslab.GeoReach.Config.Distribution;
 import org.datasyslab.GeoReach.OwnMethods;
 
 public class App {
-	static ArrayList<String> datasource_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
-
+	
     public static void LoadData_Ratio() 
     {
     	try 
@@ -168,6 +167,8 @@ public class App {
     public static void Arbitary() {
         OwnMethods.Print((Object)"Success");
     }
+    
+    static ArrayList<String> datasource_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
 
     public static void main(String[] args) {
     	try {
