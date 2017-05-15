@@ -168,7 +168,7 @@ public class App {
         OwnMethods.Print((Object)"Success");
     }
     
-    static ArrayList<String> datasource_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
+    static ArrayList<String> datasource_a = new ArrayList<String>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
 
     public static void main(String[] args) {
     	try {

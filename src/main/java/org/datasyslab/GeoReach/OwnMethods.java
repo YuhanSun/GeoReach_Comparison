@@ -58,6 +58,45 @@ public class OwnMethods {
 		return ids;
 	}
 	
+	public static ArrayList<MyRectangle> ReadExperimentQueryRectangle(String filepath) {
+		ArrayList<MyRectangle> queryrectangles;
+		block13 : {
+			queryrectangles = new ArrayList<MyRectangle>();
+			BufferedReader reader = null;
+			File file = null;
+			try {
+				try {
+					file = new File(filepath);
+					reader = new BufferedReader(new FileReader(file));
+					String temp = null;
+					while ((temp = reader.readLine()) != null) {
+						String[] line_list = temp.split("\t");
+						MyRectangle rect = new MyRectangle(Double.parseDouble(line_list[0]), Double.parseDouble(line_list[1]), Double.parseDouble(line_list[2]), Double.parseDouble(line_list[3]));
+						queryrectangles.add(rect);
+					}
+					reader.close();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					if (reader == null) break block13;
+					try {
+						reader.close();
+					}
+					catch (IOException var8_8) {}
+				}
+			}
+			finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					}
+					catch (IOException var8_10) {}
+				}
+			}
+		}
+		return queryrectangles;
+	}
+	
     public static ArrayList<ArrayList<Integer>> ReadGraph(String graph_path) {
         ArrayList graph = null;
         BufferedReader reader = null;

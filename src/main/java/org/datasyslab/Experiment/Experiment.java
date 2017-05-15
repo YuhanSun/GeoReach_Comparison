@@ -66,45 +66,6 @@ public class Experiment {
 		return al;
 	}
 
-	public static ArrayList<MyRectangle> ReadExperimentQueryRectangle(String filepath) {
-		ArrayList<MyRectangle> queryrectangles;
-		block13 : {
-			queryrectangles = new ArrayList<MyRectangle>();
-			BufferedReader reader = null;
-			File file = null;
-			try {
-				try {
-					file = new File(filepath);
-					reader = new BufferedReader(new FileReader(file));
-					String temp = null;
-					while ((temp = reader.readLine()) != null) {
-						String[] line_list = temp.split("\t");
-						MyRectangle rect = new MyRectangle(Double.parseDouble(line_list[0]), Double.parseDouble(line_list[1]), Double.parseDouble(line_list[2]), Double.parseDouble(line_list[3]));
-						queryrectangles.add(rect);
-					}
-					reader.close();
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					if (reader == null) break block13;
-					try {
-						reader.close();
-					}
-					catch (IOException var8_8) {}
-				}
-			}
-			finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					}
-					catch (IOException var8_10) {}
-				}
-			}
-		}
-		return queryrectangles;
-	}
-
 	public static void Experiment_MG_Implementation() {
 		try {
 			int ratio = 40;
@@ -126,7 +87,7 @@ public class Experiment {
 				OwnMethods.WriteFile(result_path_count, true, (String.valueOf(selectivity) + "\t"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/experiment_query/yelp_%d.txt", log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				boolean true_count_record = true;
 				ArrayList<Integer> MGs = new ArrayList<Integer>();
@@ -210,7 +171,7 @@ public class Experiment {
 				OwnMethods.WriteFile(log_path, true, (String.valueOf(selectivity) + "\n"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/experiment_query/%d.txt", log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				boolean true_count_record = true;
 				ArrayList<Integer> MGs = new ArrayList<Integer>();
@@ -301,7 +262,7 @@ public class Experiment {
 				OwnMethods.WriteFile(log_path, true, (String.valueOf(selectivity) + "\n"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/experiment_query/%d.txt", log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				boolean true_count_record = true;
 				int MG = 128;
@@ -372,7 +333,7 @@ public class Experiment {
 				OwnMethods.WriteFile(log_path, true, (String.valueOf(selectivity) + "\n"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/experiment_query/%s_%d.txt", datasource, log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				boolean true_count_record = true;
 				int MG = 16384;
@@ -436,7 +397,7 @@ public class Experiment {
 			ArrayList<Integer> refer_table = OwnMethods.ReadSCC(SCC_filepath, original_graph_path);
 			int log = (int)Math.log10(selectivity);
 			String queryrectangle_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/GeoReach_Experiment/experiment_query/%s_%d.txt", datasource, log);
-			ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+			ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 			int true_count = 0;
 			boolean true_count_record = true;
 			int MG = 16384;
@@ -505,7 +466,7 @@ public class Experiment {
 				OwnMethods.WriteFile(result_path_count, true, (String.valueOf(selectivity) + "\t"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/experiment_query/%d.txt", log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				Iterator iterator2 = MRs.iterator();
 				while (iterator2.hasNext()) {
@@ -586,7 +547,7 @@ public class Experiment {
 				OwnMethods.WriteFile(result_path_count, true, (String.valueOf(selectivity) + "\t"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/experiment_query/%d.txt", log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				Iterator iterator2 = MRs.iterator();
 				while (iterator2.hasNext()) {
@@ -657,7 +618,7 @@ public class Experiment {
 				OwnMethods.WriteFile(result_path_count, true, (String.valueOf(selectivity) + "\t"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/experiment_query/%d.txt", log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				String db_path = String.format("/home/yuhansun/Documents/Real_data/%s/neo4j-community-2.3.3_GeoReach_%d", datasource, MG);
 				Thread.currentThread();
@@ -733,7 +694,7 @@ public class Experiment {
 				OwnMethods.WriteFile(result_path_count, true, (String.valueOf(selectivity) + "\t"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/experiment_query/%d.txt", log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				boolean true_count_record = true;
 				ArrayList al_true_count = new ArrayList();
@@ -820,7 +781,7 @@ public class Experiment {
 				OwnMethods.WriteFile(result_path_count, true, (String.valueOf(selectivity) + "\t"));
 				int log = (int)Math.log10(selectivity);
 				String queryrectangle_filepath = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/experiment_query/%d.txt", log);
-				ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+				ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 				int true_count = 0;
 				boolean true_count_record = true;
 				ArrayList al_true_count = new ArrayList();
@@ -1123,7 +1084,7 @@ public class Experiment {
 			OwnMethods.WriteFile(result_path_count, true, (String.valueOf(selectivity) + "\t"));
 			int log = (int)Math.log10(selectivity);
 			String queryrectangle_filepath = String.format("/home/yuhansun/Documents/Real_data/GeoReach_Experiment/experiment_query/%d.txt", log);
-			ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+			ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
 			int true_count = 0;
 			boolean true_count_record = true;
 			ArrayList al_true_count = new ArrayList();
@@ -1215,10 +1176,8 @@ public class Experiment {
 				double selectivity = 0.001;
 				int experiment_count = 50;
 
-				String result_path_time = "/mnt/hgfs/Experiment_Result/GeoReach_Experiment/result/ratio/" 
-						+ dataset + "_GeoReach_querytime" + ".csv";
-				String result_path_count = "/mnt/hgfs/Experiment_Result/GeoReach_Experiment/result/ratio/" 
-						+ dataset + "_GeoReach_accesscount" + ".csv";
+				String result_path_time = "/mnt/hgfs/Experiment_Result/GeoReach_Experiment/result/ratio/GeoReach_querytime.csv";
+				String result_path_count = "/mnt/hgfs/Experiment_Result/GeoReach_Experiment/result/ratio/GeoReach_accesscount.csv";
 				String log_path = "/mnt/hgfs/Experiment_Result/GeoReach_Experiment/result/ratio/query_GeoReach.log";
 
 				OwnMethods.WriteFile(result_path_time, true, dataset + "\tColdNeo4j\t"+String.valueOf(selectivity)+"\n");
@@ -1232,13 +1191,15 @@ public class Experiment {
 					String querynodeid_filepath = String.format("/mnt/hgfs/Experiment_Result/GeoReach_Experiment"
 							+ "/experiment_query/%s/experiment_id.txt", dataset);
 					ArrayList<String> nodeids = Experiment.ReadExperimentNode(querynodeid_filepath);
+					
 					OwnMethods.WriteFile(result_path_time, true, ratio + "\t");
 					OwnMethods.WriteFile(result_path_count, true, ratio + "\t");
 					OwnMethods.WriteFile(log_path, true, ratio + "\n");
+					
 					String queryrectangle_filepath = String.format("/mnt/hgfs/Experiment_Result/GeoReach_Experiment"
 							+ "/experiment_query/%s/%s_%d_queryrect_%d.txt", dataset, distribution, ratio, (int) (spaNodeCount * selectivity));
-					OwnMethods.Print(queryrectangle_filepath);
-					ArrayList<MyRectangle> queryrectangles = Experiment.ReadExperimentQueryRectangle(queryrectangle_filepath);
+					ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
+					
 					int true_count = 0;
 					boolean true_count_record = true;
 					int MG = 128, MR = 200, MC = 0;
@@ -1275,7 +1236,8 @@ public class Experiment {
 					true_count_record = false;
 					OwnMethods.WriteFile(log_path, true, "\n");
 				}
-
+				OwnMethods.WriteFile(result_path_time, true, "\n");
+				OwnMethods.WriteFile(result_path_count, true, "\n");
 			}
 		}
 		catch (Exception e) {
@@ -1286,7 +1248,8 @@ public class Experiment {
 
 	public static int split_pieces = 128;
 	public static String password = "syh19910205";
-	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
+//	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
+	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("Patents", "go_uniprot", "citeseerx"));
 	public static ArrayList<String> distribution_a = new ArrayList<String>();
 	//	public static String datasource = "Gowalla";
 	public static String datasource = "foursquare";
