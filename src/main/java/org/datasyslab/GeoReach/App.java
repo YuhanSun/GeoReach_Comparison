@@ -20,50 +20,6 @@ import org.datasyslab.GeoReach.OwnMethods;
 
 public class App {
 	
-    public static void LoadData_Ratio() 
-    {
-    	try 
-    	{
-            String distribution = Distribution.Random_spatial_distributed.name();
-            int MG = 128;
-            int MC = 0;
-            int MR = 200;
-            int ratio = 20;
-            while (ratio <= 80) {
-                for (String datasource : datasource_a) {
-                    String graph_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/new_graph.txt", datasource);
-                    String entity_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/%s/%d/new_entity.txt", 
-                    		datasource, distribution, ratio);
-//                    int MG = datasource.equals("go_uniprot") ? 128 : (datasource.equals("Patents") ? 128 : 128);
-                    String GeoReach_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/GeoReachIndex/ratio/"
-                    		+ "GeoReach_%s_%d_%d_%d_%d.txt", datasource, distribution, ratio, MG, MR, MC);
-                    String db_folder_name = String.format("neo4j-community-2.3.3_GeoReach_%s_%d_%d_%d_%d", distribution, ratio, MG, MR, MC);
-                    String db_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/ratio/%s/data/graph.db", datasource, db_folder_name);
-                    new org.datasyslab.GeoReach.Batch_Inserter(graph_filepath, entity_filepath, GeoReach_filepath, db_filepath);
-                }
-                ratio += 20;
-            }
-        }
-    	catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			System.exit(-1);
-		}
-    }
-
-    public static void LoadData_Distribution() {
-        String distribution = "Random_spatial_distributed";
-        int ratio = 40;
-        String datasource = "citeseerx";
-        String graph_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/new_graph.txt", datasource);
-        String entity_filepath = String.format("/home/yuhansun/Documents/share/Real_Data/%s/%s/%d/new_entity.txt", datasource, distribution, ratio);
-        int MG = 128;
-        String GeoReach_filepath = String.format("/home/yuhansun/Documents/share/Real_data/%s/GeoReachIndex/GeoReach_%s_%d_%d.txt", datasource, distribution, ratio, MG);
-        String db_folder_name = String.format("neo4j-community-2.3.3_GeoReach_%d", MG);
-        String db_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/%s/data/graph.db", datasource, db_folder_name);
-        new org.datasyslab.GeoReach.Batch_Inserter(graph_filepath, entity_filepath, GeoReach_filepath, db_filepath);
-    }
-
     public static void LoadData_YelpFolder() {
         String distribution = "Random_spatial_distributed";
         int target_folder = 1;
@@ -168,12 +124,71 @@ public class App {
         OwnMethods.Print((Object)"Success");
     }
     
-    static ArrayList<String> datasource_a = new ArrayList<String>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
+    /**
+	 * load data for ratio experiment
+	 */
+    public static void LoadData_Ratio() 
+    {
+    	try 
+    	{
+            String distribution = Distribution.Random_spatial_distributed.name();
+            int MG = 128, MR = 200, MC = 0;
+            int ratio = 20;
+            while (ratio <= 80) {
+                for (String datasource : datasource_a) {
+                    String graph_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/new_graph.txt", datasource);
+                    String entity_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/%s/%d/new_entity.txt", 
+                    		datasource, distribution, ratio);
+//                    int MG = datasource.equals("go_uniprot") ? 128 : (datasource.equals("Patents") ? 128 : 128);
+                    String GeoReach_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/GeoReachIndex/ratio/"
+                    		+ "GeoReach_%s_%d_%d_%d_%d.txt", datasource, distribution, ratio, MG, MR, MC);
+                    String db_folder_name = String.format("neo4j-community-2.3.3_GeoReach_%s_%d_%d_%d_%d", distribution, ratio, MG, MR, MC);
+                    String db_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/ratio/%s/data/graph.db", datasource, db_folder_name);
+                    new org.datasyslab.GeoReach.Batch_Inserter(graph_filepath, entity_filepath, GeoReach_filepath, db_filepath);
+                }
+                ratio += 20;
+            }
+        }
+    	catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    }
 
+    public static void LoadData_Distribution() 
+    {
+    	int ratio = 20, MG = 128, MR = 200, MC = 0;
+        for ( String datasource : datasource_a)
+        {
+        	for ( String distribution : distribution_a)
+        	{
+        		if ( datasource.equals("go_uniprot"))
+        			MG = 8;
+        		else
+        			MG = 128;
+        		String graph_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/new_graph.txt", datasource);
+                String entity_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/%s/%d/new_entity.txt", 
+                		datasource, distribution, ratio);
+                String GeoReach_filepath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/GeoReachIndex/distribution/"
+                		+ "GeoReach_%s_%d_%d_%d_%d.txt", datasource, distribution, ratio, MG, MR, MC);
+                String db_folder_name = String.format("neo4j-community-2.3.3_GeoReach_%s_%d_%d_%d_%d", distribution, ratio, MG, MR, MC);
+                String db_filepath = String.format("/home/yuhansun/Documents/Real_data/%s/distribution/%s/data/graph.db", datasource, db_folder_name);
+                OwnMethods.Print(String.format("%s\t%s\n", datasource, distribution));
+                new org.datasyslab.GeoReach.Batch_Inserter(graph_filepath, entity_filepath, GeoReach_filepath, db_filepath);
+        	}
+        }
+    }
+    
+    static ArrayList<String> datasource_a = new ArrayList<String>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
+    static ArrayList<String> distribution_a = new ArrayList<String>(Arrays.asList(Distribution.Random_spatial_distributed.name(),
+			Distribution.Clustered_distributed.name(), Distribution.Zipf_distributed.name())); 
+    
     public static void main(String[] args) {
     	try {
 //        App.LoadData_MC();
-    		LoadData_Ratio();
+//    		LoadData_Ratio();
+    		LoadData_Distribution();
 			
 		} catch (Exception e) {
 			// TODO: handle exception

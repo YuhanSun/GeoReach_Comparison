@@ -1245,11 +1245,99 @@ public class Experiment {
 			System.exit(-1);
 		}
 	}
+	
+	/**
+	 * for dag dataset change spatial data distribution
+	 */
+	public static void Experiment_Distribution_ColdNeo4j_DAG() {
+		try {
+			ArrayList<String> distribution_a = new ArrayList<String>(Arrays.asList(Distribution.Random_spatial_distributed.name(),
+					Distribution.Clustered_distributed.name(), Distribution.Zipf_distributed.name())); 
+			int ratio = 20;
+			for (String dataset : dataset_a)
+			{
+				String graph_path = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/new_graph.txt", dataset);
+				int nodeCount = OwnMethods.GetNodeCountGeneral(graph_path);
+
+				MyRectangle p_total_range = new MyRectangle(0.0, 0.0, 1000.0, 1000.0);
+				int p_split_pieces = 128;
+				double selectivity = 0.001;
+				int experiment_count = 50;
+
+				String result_path_time = "/mnt/hgfs/Experiment_Result/GeoReach_Experiment/result/distribution/GeoReach_querytime.csv";
+				String result_path_count = "/mnt/hgfs/Experiment_Result/GeoReach_Experiment/result/distribution/GeoReach_accesscount.csv";
+				String log_path = "/mnt/hgfs/Experiment_Result/GeoReach_Experiment/result/distribution/query_GeoReach.log";
+
+				OwnMethods.WriteFile(result_path_time, true, dataset + "\tColdNeo4j\t"+String.valueOf(selectivity)+"\n");
+				OwnMethods.WriteFile(result_path_count, true, dataset + "\tColdNeo4j\t"+String.valueOf(selectivity)+"\n");
+				OwnMethods.WriteFile(log_path, true, String.format("GeoReach\t%s\t"+String.valueOf(selectivity)+"\n", dataset));
+
+				for ( String distribution : distribution_a)
+				{
+					int spaNodeCount = (int) (nodeCount * (100-ratio) / 100.0); 
+
+					String querynodeid_filepath = String.format("/mnt/hgfs/Experiment_Result/GeoReach_Experiment"
+							+ "/experiment_query/%s/experiment_id.txt", dataset);
+					ArrayList<String> nodeids = Experiment.ReadExperimentNode(querynodeid_filepath);
+					
+					OwnMethods.WriteFile(result_path_time, true, ratio + "\t");
+					OwnMethods.WriteFile(result_path_count, true, ratio + "\t");
+					OwnMethods.WriteFile(log_path, true, ratio + "\n");
+					
+					String queryrectangle_filepath = String.format("/mnt/hgfs/Experiment_Result/GeoReach_Experiment"
+							+ "/experiment_query/distribution/%s_%s_%d_queryrect_%d.txt", dataset, distribution, ratio, (int) (spaNodeCount * selectivity));
+					ArrayList<MyRectangle> queryrectangles = OwnMethods.ReadExperimentQueryRectangle(queryrectangle_filepath);
+					
+					int true_count = 0;
+					boolean true_count_record = true;
+					int MG = 128, MR = 200, MC = 0;
+					String db_path = String.format("/home/yuhansun/Documents/Real_data/%s/distribution/"
+							+ "neo4j-community-2.3.3_GeoReach_Random_spatial_distributed_%d_%d_%d_%d", dataset, ratio, MG, MR, MC);
+					int visitednode_count = 0;
+					int time = 0;
+					int i = 0;
+					while (i < experiment_count) 
+					{
+						OwnMethods.Print(i);
+						int id = Integer.parseInt(nodeids.get(i));
+						MyRectangle queryrect = queryrectangles.get(i);
+						OwnMethods.ClearCache(password);
+						Neo4j_Graph_Store.StartServer(db_path);
+						Thread.currentThread();
+						Thread.sleep(2000);
+						GeoReach geo = new GeoReach(p_total_range, p_split_pieces, 0);
+						long one_time = 0;
+						long start = System.currentTimeMillis();
+						boolean result = geo.ReachabilityQuery((long)id, queryrect);
+						one_time = System.currentTimeMillis() - start;
+						time = (int)((long)time + one_time);
+						visitednode_count += geo.visited_count;
+						if (result && true_count_record) 
+							++true_count;
+						OwnMethods.WriteFile(log_path, true, String.format(
+								"%d\t%d\t%d\t", one_time, geo.neo4j_time, geo.visited_count) + result + "\n");
+						Neo4j_Graph_Store.StopServer(db_path);
+						++i;
+					}
+					OwnMethods.WriteFile(result_path_time, true, String.valueOf(time / experiment_count) + "\t"+true_count+"\t\n");
+					OwnMethods.WriteFile(result_path_count, true, String.valueOf(visitednode_count / experiment_count) + "\t\n");
+					true_count_record = false;
+					OwnMethods.WriteFile(log_path, true, "\n");
+				}
+				OwnMethods.WriteFile(result_path_time, true, "\n");
+				OwnMethods.WriteFile(result_path_count, true, "\n");
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
 
 	public static int split_pieces = 128;
 	public static String password = "syh19910205";
-//	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
-	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("Patents", "go_uniprot", "citeseerx"));
+	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
+//	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("Patents", "go_uniprot", "citeseerx"));
 	public static ArrayList<String> distribution_a = new ArrayList<String>();
 	//	public static String datasource = "Gowalla";
 	public static String datasource = "foursquare";
@@ -1268,7 +1356,8 @@ public class Experiment {
 			//			Traversal.Experiment_Cold_True(datasource, target_folder);
 			//			Experiment_Cold_True(datasource, target_folder);
 
-			Experiment_Ratio_ColdNeo4j_DAG();
+//			Experiment_Ratio_ColdNeo4j_DAG();
+			Experiment_Distribution_ColdNeo4j_DAG();
 		}
 		catch (Exception e) {
 			e.printStackTrace();

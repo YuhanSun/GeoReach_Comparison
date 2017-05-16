@@ -21,30 +21,99 @@ import com.vividsolutions.jts.index.strtree.GeometryItemDistance;
 import com.vividsolutions.jts.index.strtree.STRtree;
 
 public class Experiment_Prepare {
-	
-//	static String dataset;
-	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx")); 
-//	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("go_uniprot", "citeseerx"));
+
+	//	static String dataset;
+	static ArrayList<String> dataset_a = new ArrayList<String>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx")); 
+	//	static ArrayList<String> dataset_a = new ArrayList<String>(Arrays.asList("go_uniprot", "citeseerx"));
+	static ArrayList<String> distribution_a = new ArrayList<String>(Arrays.asList(Distribution.Random_spatial_distributed.name(),
+			Distribution.Clustered_distributed.name(), Distribution.Zipf_distributed.name())); 
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-//		generateCenterIDForRatio();
-//		OwnMethods.Print(dataset_a);
-//		generateQueryRectangleForRatio();
-		
+		//		generateCenterIDForRatio();
+		//		OwnMethods.Print(dataset_a);
+		//		generateQueryRectangleForRatio();
+
+		//		generateCenterIDForDistribution();
+		generateQueryRectangleForDistribution();
+
+
 	}
-	
+
+	public static void generateQueryRectangleForDistribution()
+	{
+		try {
+			int experiment_count = 500;
+			int target_folder = 20;
+			for (String datasource : dataset_a)
+				//			String datasource = "Patents";
+			{
+				for ( String distribution : distribution_a)
+				{
+					OwnMethods.Print(String.format("%s\t%s\n", datasource, distribution));
+					String entity_path = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/%s/%s/new_entity.txt", 
+							datasource, distribution, target_folder);
+					ArrayList<Entity> entities = OwnMethods.ReadEntity((String)entity_path);
+					int spa_count = OwnMethods.GetSpatialEntityCount(entities);
+					STRtree stRtree = OwnMethods.ConstructSTRee(entities);
+
+					String center_id_path = String.format("/mnt/hgfs/Experiment_Result/GeoReach_Experiment/experiment_query/distribution/"
+							+ "%s_%s_%d_centerids.txt", datasource, distribution, target_folder);
+					ArrayList<Integer> center_ids = OwnMethods.ReadCenterID(center_id_path);
+					ArrayList<Integer> final_center_ids = OwnMethods.GetRandom_NoDuplicate(center_ids, experiment_count);
+
+					double selectivity = 0.001;
+					int name_suffix = (int) (selectivity * spa_count);
+					String write_line = "";
+					for (int id : final_center_ids)
+					{
+						double lon = entities.get(id).lon;
+						double lat = entities.get(id).lat;
+						GeometryFactory factory = new GeometryFactory();
+						Point center = factory.createPoint(new Coordinate(lon, lat));
+						Object[] result = stRtree.kNearestNeighbour(center.getEnvelopeInternal(),
+								new GeometryFactory().toGeometry(center.getEnvelopeInternal()),
+								new GeometryItemDistance(), name_suffix);
+						double radius = 0.0;
+						for (Object object : result)
+						{
+							Point point = (Point) object;
+							double dist = center.distance(point);
+							if(dist > radius)
+								radius = dist;
+						}
+						double a = Math.sqrt(Math.PI) * radius;
+						double minx = center.getX() - a / 2;
+						double miny = center.getY() - a / 2;
+						double maxx = center.getX() + a / 2;
+						double maxy = center.getY() + a / 2;
+
+						write_line += String.format("%f\t%f\t%f\t%f\n", minx, miny, maxx, maxy);
+					}
+					String output_path = String.format("/mnt/hgfs/Experiment_Result/GeoReach_Experiment/experiment_query/distribution/"
+							+ "%s_%s_%d_queryrect_%d.txt", datasource, distribution, target_folder, name_suffix);
+					OwnMethods.WriteFile(output_path, true, write_line);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			System.exit(0);
+		}
+
+	}
+
 	public static void generateQueryRectangleForRatio()
 	{
 		try {
 			int experiment_count = 500;
 			String distribution = Distribution.Random_spatial_distributed.name();
 			for (String datasource : dataset_a)
-//			String datasource = "Patents";
+				//			String datasource = "Patents";
 			{
 				OwnMethods.Print(datasource);
 				for ( int target_folder = 20; target_folder < 90; target_folder += 20)
-//				int target_folder = 80;
+					//				int target_folder = 80;
 				{
 					String entity_path = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/%s/%s/new_entity.txt", 
 							datasource, distribution, target_folder);
@@ -58,7 +127,7 @@ public class Experiment_Prepare {
 					ArrayList<Integer> final_center_ids = OwnMethods.GetRandom_NoDuplicate(center_ids, experiment_count);
 
 					double selectivity = 0.001;
-//					while (selectivity < 0.9)
+					//					while (selectivity < 0.9)
 					{
 						int name_suffix = (int) (selectivity * spa_count);
 						String write_line = "";
@@ -79,7 +148,7 @@ public class Experiment_Prepare {
 								if(dist > radius)
 									radius = dist;
 							}
-//							OwnMethods.Print(radius);
+							//							OwnMethods.Print(radius);
 							double a = Math.sqrt(Math.PI) * radius;
 							double minx = center.getX() - a / 2;
 							double miny = center.getY() - a / 2;
@@ -97,12 +166,30 @@ public class Experiment_Prepare {
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			 e.printStackTrace();
-			 System.exit(0);
+			e.printStackTrace();
+			System.exit(0);
 		}
-		
+
 	}
-	
+
+	public static void generateCenterIDForDistribution()
+	{
+		int target_folder = 20;
+		for (String datasource : dataset_a)
+		{
+			for ( String distribution : distribution_a)
+			{
+				OwnMethods.Print(String.format("%s\t%s\n", datasource, distribution));
+				String entityPath = String.format("/mnt/hgfs/Ubuntu_shared/Real_Data/%s/%s/%s/new_entity.txt", 
+						datasource, distribution, target_folder);
+				ArrayList<Entity> entities = OwnMethods.ReadEntity(entityPath);
+				String outputPath = String.format("/mnt/hgfs/Experiment_Result/GeoReach_Experiment/experiment_query/distribution/"
+						+ "%s_%s_%d_centerids.txt", datasource, distribution, target_folder);
+				generateQueryRectangleCenterID(entities, outputPath, 500);
+			}
+		}
+	}
+
 	public static void generateCenterIDForRatio()
 	{
 		for (String datasource : dataset_a)
@@ -112,7 +199,7 @@ public class Experiment_Prepare {
 				GenerateQueryRectangleCenterID(datasource, Distribution.Random_spatial_distributed.name(), target_folder);
 		}
 	}
-	
+
 	/**
 	 * generate square query range
 	 * center location space oriented
@@ -457,6 +544,36 @@ public class Experiment_Prepare {
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * generic function
+	 * @param entities
+	 * @param center_id_path
+	 * @param experimentCount
+	 */
+	public static void generateQueryRectangleCenterID(ArrayList<Entity> entities, String center_id_path, int experimentCount) 
+	{
+		try {
+			TreeSet<Integer> center_ids_set = new TreeSet<Integer>();
+			ArrayList<Integer> center_ids_list = new ArrayList<Integer>();
+			Random random = new Random();
+			do {
+				int center_id = (int)(random.nextDouble() * (double)entities.size());
+				if (!((Entity)entities.get((int)center_id)).IsSpatial || !center_ids_set.add(center_id)) continue;
+				center_ids_list.add(center_id);
+			} while (center_ids_set.size() != experimentCount);
+			OwnMethods.WriteFile((String)center_id_path, (boolean)false, (String)"");
+			Iterator iterator = center_ids_list.iterator();
+			while (iterator.hasNext()) {
+				int id = (Integer)iterator.next();
+				OwnMethods.WriteFile((String)center_id_path, (boolean)true, (String)String.format("%d\n", id));
+			}
+		}
+		catch (Exception e) {
+			// empty catch block
 			e.printStackTrace();
 		}
 	}
