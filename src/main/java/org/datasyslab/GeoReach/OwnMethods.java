@@ -185,8 +185,9 @@ public class OwnMethods {
             }
             reader.close();
         }
-        catch (Exception node_count) {
-            // empty catch block
+        catch (Exception e) {
+        	e.printStackTrace();
+        	System.exit(-1);
         }
         return entities;
     }
