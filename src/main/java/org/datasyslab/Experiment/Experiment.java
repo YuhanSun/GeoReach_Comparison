@@ -1357,7 +1357,8 @@ public class Experiment {
 
 	public static int split_pieces = 128;
 	public static String password = "syh19910205";
-	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("uniprotenc_150m", "Patents", "go_uniprot", "citeseerx"));
+	static ArrayList<String> dataset_a = new ArrayList<String>(Arrays.asList("uniprotenc_150m", "Patents", 
+			"go_uniprot", "citeseerx"));
 //	static ArrayList<String> dataset_a = new ArrayList<>(Arrays.asList("Patents", "go_uniprot", "citeseerx"));
 	public static ArrayList<String> distribution_a = new ArrayList<String>();
 	//	public static String datasource = "Gowalla";

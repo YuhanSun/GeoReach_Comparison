@@ -37,7 +37,7 @@ public class Experiment_Prepare {
 		//		generateCenterIDForDistribution();
 //		generateQueryRectangleForDistribution();
 		
-//		generateCenterIDForSelectivity();
+		generateCenterIDForSelectivity();
 		generateQueryRectangleForSelectivity();
 
 
